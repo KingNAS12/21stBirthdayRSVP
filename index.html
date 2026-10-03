@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nathan's 21st</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{--felt:#0e3b2c;--felt2:#0a2e22;--chalk:#e9f2ec;--ball:#f2c230;--red:#c8322b}
+*{box-sizing:border-box}
+body{margin:0;font:400 1.1rem/1.6 'Bricolage Grotesque',system-ui,sans-serif;color:var(--chalk);background:radial-gradient(ellipse at 50% 0,var(--felt) 0,var(--felt2) 70%) fixed;min-height:100vh}
+main{max-width:640px;margin:0 auto;padding:clamp(2rem,8vw,5rem) 1.5rem}
+h1{font-weight:800;font-size:clamp(3rem,15vw,6.5rem);line-height:.92;letter-spacing:-.04em;margin:.2em 0}
+h1 .n{color:var(--ball)}
+.lead{font-size:1.25rem;max-width:34ch}
+.aside{opacity:.75;font-size:1rem;margin:1.5rem 0 2.5rem}
+dl{display:grid;grid-template-columns:auto 1fr;gap:.6rem 1.5rem;margin:0 0 2rem;padding:1.5rem 0;border-block:2px solid var(--ball)}
+dt{color:var(--ball);font-weight:700}dd{margin:0}
+.ball{display:inline-block;width:.8em;height:.8em;border-radius:50%;background:var(--red);margin-right:.5rem;vertical-align:-.05em}
+h2{font-size:2rem;letter-spacing:-.02em;margin:3rem 0 1rem}
+form{display:grid;gap:1.1rem}
+label{display:grid;gap:.3rem;font-weight:700}
+label small{font-weight:400;opacity:.7}
+input[type=text],input[type=password]{font:inherit;padding:.75rem 1rem;border:2px solid transparent;border-radius:.6rem;background:var(--chalk);color:#10231b}
+input:focus-visible,button:focus-visible{outline:3px solid var(--ball);outline-offset:2px}
+fieldset{border:0;padding:0;margin:0;display:flex;gap:.6rem;flex-wrap:wrap}
+legend{font-weight:700;margin-bottom:.4rem}
+fieldset label{display:block;font-weight:400}
+fieldset input{position:absolute;opacity:0}
+fieldset span{display:block;padding:.6rem 1.4rem;border:2px solid var(--chalk);border-radius:99px;cursor:pointer}
+fieldset input:checked+span{background:var(--ball);border-color:var(--ball);color:#10231b;font-weight:700}
+fieldset input:focus-visible+span{outline:3px solid var(--ball);outline-offset:2px}
+.row{display:flex;gap:.8rem;flex-wrap:wrap;align-items:center}
+button{font:700 1.05rem inherit;font-family:inherit;padding:.8rem 1.6rem;border:0;border-radius:.6rem;background:var(--ball);color:#10231b;cursor:pointer}
+button.ghost{background:none;color:var(--chalk);border:2px solid var(--chalk)}
+button:disabled{opacity:.5}
+#msg{min-height:1.6em;font-weight:700}#msg.err{color:#ff9d96}
+</style></head><body><main>
+<p class="lead">You are cordially invited to</p>
+<h1>Nathan Alex Sequeira's <span class="n">21st</span> birthday.</h1>
+<p class="aside">Why did I make this a website? Because I was bored and I'm a computer scientist.</p>
+<dl>
+<dt>Date</dt><dd>Saturday, 9th January 2027</dd>
+<dt>Time</dt><dd>18:00 MST</dd>
+<dt>Place</dt><dd>Par and Pour, 9884 47 Ave NW</dd>
+<dt>There will be</dt><dd>Buffet, Drinks, Virtual Golf, Pool Tables</dd>
+</dl>
+<h2><span class="ball"></span>RSVP here</h2>
+<form id="f">
+<label>Name <input type="text" id="name" required maxlength="60" autocomplete="name"></label>
+<label>Password <small>Optional. Set one to edit your RSVP later.</small>
+<input type="password" id="pw" maxlength="100" autocomplete="current-password"></label>
+<fieldset><legend>Are you coming?</legend>
+<label><input type="radio" name="s" value="yes" required><span>Yes</span></label>
+<label><input type="radio" name="s" value="no"><span>No</span></label>
+<label><input type="radio" name="s" value="maybe"><span>Maybe</span></label></fieldset>
+<div class="row"><button id="go">Send RSVP</button>
+<button type="button" id="load" class="ghost">Load my existing RSVP</button></div>
+<div id="msg" role="status" aria-live="polite"></div>
+</form></main>
+<script>
+const WORKER_URL="https://YOUR-WORKER.YOUR-SUBDOMAIN.workers.dev"; // set after deploying worker/worker.js
+const $=id=>document.getElementById(id), msg=(t,e)=>{$('msg').textContent=t;$('msg').className=e?'err':''};
+async function call(action,body){
+  const r=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,...body})});
+  const d=await r.json().catch(()=>({error:'Server error. Try again.'}));
+  if(!r.ok)throw new Error(d.error||'Something went wrong.');return d;
+}
+const base=()=>({name:$('name').value,password:$('pw').value});
+$('f').onsubmit=async e=>{e.preventDefault();$('go').disabled=true;msg('Saving…');
+  try{const d=await call('rsvp',{...base(),status:document.querySelector('[name=s]:checked').value});
+    msg(`Saved. You're down as "${d.status}". Log in with the same name and password to change it.`)}
+  catch(x){msg(x.message,1)}$('go').disabled=false};
+$('load').onclick=async()=>{if(!$('name').value)return msg('Enter your name first.',1);msg('Looking…');
+  try{const d=await call('lookup',base());document.querySelector(`[name=s][value=${d.status}]`).checked=true;msg(`Found it: "${d.status}". Change it and press Send RSVP.`)}
+  catch(x){msg(x.message,1)}};
+</script></body></html>
