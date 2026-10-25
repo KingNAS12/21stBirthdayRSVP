@@ -5,42 +5,46 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--green:#0c2b1f;--gold:#d6ab5f;--soft:#e8d9b8}
+:root{--green:#0c2b1f;--gold:#d6ab5f;--soft:#e8d9b8;--purple:#b08ae6;--orange:#f59a4a}
 *{box-sizing:border-box}
 body{margin:0;background:var(--green);color:var(--gold);font:300 1.1rem/1.65 'Jost',system-ui,sans-serif;padding:clamp(.75rem,4vw,2.5rem)}
 .card{max-width:620px;margin:0 auto;border:1px solid var(--gold);border-radius:2.5rem;padding:5px}
 .inner{border:1px solid var(--gold);border-radius:2.1rem;padding:clamp(2rem,8vw,3.5rem) clamp(1.25rem,6vw,3rem);text-align:center}
-hr{border:0;border-top:1px solid var(--gold);margin:1.75rem auto;width:min(100%,260px)}
-.lead{margin:0;letter-spacing:.08em;color:var(--soft)}
-h1{font-weight:300;font-size:clamp(2.1rem,9vw,3.4rem);line-height:1.1;letter-spacing:.06em;margin:0}
-h1 b{display:block;font-weight:400;font-size:1.9em;letter-spacing:.04em;margin-top:.1em}
+hr{border:0;height:2px;background:linear-gradient(90deg,var(--purple),var(--orange));margin:1.75rem auto;width:min(100%,260px)}
+.lead{margin:0 0 .75rem;letter-spacing:.08em;color:var(--soft)}
+h1{font-weight:400;font-size:clamp(1.25rem,5.6vw,2.4rem);line-height:1.25;letter-spacing:.03em;margin:0}
+h1 span{display:block;white-space:nowrap}
+h1 span+span{color:var(--purple)}
 .aside{color:var(--soft);font-size:.98rem;max-width:36ch;margin:0 auto}
 dl{margin:0;display:grid;gap:1.1rem}
-dt{font-size:.9rem;color:var(--soft);letter-spacing:.12em}
+dt{font-size:.9rem;color:var(--orange);letter-spacing:.12em}
 dd{margin:0;font-size:1.3rem;font-weight:400}
-h2{font-weight:300;font-size:2rem;letter-spacing:.1em;margin:0 0 1.25rem}
+dd.gifts{font-size:1.05rem;font-weight:300;max-width:42ch;margin:0 auto;display:grid;gap:.6rem}
+h2{color:var(--orange);font-weight:300;font-size:2rem;letter-spacing:.1em;margin:0 0 1.25rem}
 form{display:grid;gap:1.1rem;text-align:left}
 label{display:grid;gap:.3rem;font-weight:400}
 label small{font-weight:300;color:var(--soft)}
 input[type=text],input[type=password]{font:inherit;padding:.75rem 1rem;border:1px solid var(--gold);border-radius:99px;background:transparent;color:var(--soft)}
 input::placeholder{color:#8a7648}
-input:focus-visible,button:focus-visible{outline:2px solid var(--soft);outline-offset:3px}
+input:focus-visible,button:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
 fieldset{border:0;padding:0;margin:0;display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center}
 legend{font-weight:400;margin:0 auto .6rem}
 fieldset label{display:block;font-weight:300}
 fieldset input{position:absolute;opacity:0}
 fieldset span{display:block;padding:.55rem 1.6rem;border:1px solid var(--gold);border-radius:99px;cursor:pointer}
-fieldset input:checked+span{background:var(--gold);color:var(--green);font-weight:500}
+fieldset input:checked+span{background:var(--purple);border-color:var(--purple);color:var(--green);font-weight:500}
 fieldset input:focus-visible+span{outline:2px solid var(--soft);outline-offset:3px}
 .row{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center;margin-top:.5rem}
-button{font:500 1rem 'Jost',sans-serif;padding:.8rem 1.7rem;border:1px solid var(--gold);border-radius:99px;background:var(--gold);color:var(--green);cursor:pointer}
-button.ghost{background:none;color:var(--gold)}
-button:disabled{opacity:.5}
+button{font:500 1rem 'Jost',sans-serif;padding:.8rem 1.7rem;border:1px solid var(--orange);border-radius:99px;background:var(--orange);color:var(--green);cursor:pointer}
+button.ghost{background:none;color:var(--purple);border-color:var(--purple)}
+button:disabled{opacity:.4;cursor:not-allowed}
 #msg{min-height:1.6em;text-align:center;color:var(--soft)}#msg.err{color:#f0a08a}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s ease}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
 </style></head><body><div class="card"><main class="inner">
 <p class="lead">You are cordially invited to</p>
-<hr>
-<h1>Nathan Alex Sequeira's <b>21st birthday</b></h1>
+<h1><span>Nathan Alex Sequeira's</span><span>21st birthday</span></h1>
 <hr>
 <p class="aside">Why did I make this a website? Because I was bored and I'm a computer scientist.</p>
 <hr>
@@ -48,7 +52,8 @@ button:disabled{opacity:.5}
 <div><dt>Date</dt><dd>Saturday, 9th January 2027</dd></div>
 <div><dt>Time</dt><dd>18:00 MST</dd></div>
 <div><dt>Place</dt><dd>Par and Pour, 9884 47 Ave NW</dd></div>
-<div><dt>There will be</dt><dd>Buffet, Drinks, Virtual Golf, Pool Tables</dd></div>
+<div><dt>There will be</dt><dd>Buffet, Drinks,<br>Pool Tables, Virtual Golf ($20).</dd></div>
+<div><dt>Gifts</dt><dd class="gifts"><span>Your presence is the greatest gift!</span><span>But... if you'd really like to get me something, I need money to fund a research trip to a conference in Japan.</span><span>Or I'll also always accept new action figures to add to my collection.</span></dd></div>
 </dl>
 <hr>
 <h2>RSVP here</h2>
@@ -60,7 +65,7 @@ button:disabled{opacity:.5}
 <label><input type="radio" name="s" value="yes" required><span>Yes</span></label>
 <label><input type="radio" name="s" value="no"><span>No</span></label>
 <label><input type="radio" name="s" value="maybe"><span>Maybe</span></label></fieldset>
-<div class="row"><button id="go">Send RSVP</button>
+<div class="row"><button id="go" disabled>Send RSVP</button>
 <button type="button" id="load" class="ghost">Load my existing RSVP</button></div>
 <div id="msg" role="status" aria-live="polite"></div>
 </form></main></div>
@@ -72,12 +77,19 @@ async function call(action,body){
   const d=await r.json().catch(()=>({error:'Server error. Try again.'}));
   if(!r.ok)throw new Error(d.error||'Something went wrong.');return d;
 }
+const ready=()=>{$('go').disabled=!($('name').value.trim()&&document.querySelector('[name=s]:checked'))};
+$('f').addEventListener('input',ready);$('f').addEventListener('change',ready);
 const base=()=>({name:$('name').value,password:$('pw').value});
 $('f').onsubmit=async e=>{e.preventDefault();$('go').disabled=true;msg('Saving…');
   try{const d=await call('rsvp',{...base(),status:document.querySelector('[name=s]:checked').value});
     msg(`Saved. You're down as "${d.status}". Log in with the same name and password to change it.`)}
-  catch(x){msg(x.message,1)}$('go').disabled=false};
+  catch(x){msg(x.message,1)}ready()};
 $('load').onclick=async()=>{if(!$('name').value)return msg('Enter your name first.',1);msg('Looking…');
-  try{const d=await call('lookup',base());document.querySelector(`[name=s][value=${d.status}]`).checked=true;msg(`Found it: "${d.status}". Change it and press Send RSVP.`)}
+  try{const d=await call('lookup',base());document.querySelector(`[name=s][value=${d.status}]`).checked=true;ready();msg(`Found it: "${d.status}". Change it and press Send RSVP.`)}
   catch(x){msg(x.message,1)}};
+// Fade sections in as they scroll into view
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
+  document.querySelectorAll('.aside,dl>div,main>hr,h2,form').forEach(el=>{el.classList.add('reveal');io.observe(el)});
+}
 </script></body></html>
