@@ -3,48 +3,55 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Nathan's 21st</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--felt:#0e3b2c;--felt2:#0a2e22;--chalk:#e9f2ec;--ball:#f2c230;--red:#c8322b}
+:root{--green:#0c2b1f;--gold:#d6ab5f;--soft:#e8d9b8}
 *{box-sizing:border-box}
-body{margin:0;font:400 1.1rem/1.6 'Bricolage Grotesque',system-ui,sans-serif;color:var(--chalk);background:radial-gradient(ellipse at 50% 0,var(--felt) 0,var(--felt2) 70%) fixed;min-height:100vh}
-main{max-width:640px;margin:0 auto;padding:clamp(2rem,8vw,5rem) 1.5rem}
-h1{font-weight:800;font-size:clamp(3rem,15vw,6.5rem);line-height:.92;letter-spacing:-.04em;margin:.2em 0}
-h1 .n{color:var(--ball)}
-.lead{font-size:1.25rem;max-width:34ch}
-.aside{opacity:.75;font-size:1rem;margin:1.5rem 0 2.5rem}
-dl{display:grid;grid-template-columns:auto 1fr;gap:.6rem 1.5rem;margin:0 0 2rem;padding:1.5rem 0;border-block:2px solid var(--ball)}
-dt{color:var(--ball);font-weight:700}dd{margin:0}
-.ball{display:inline-block;width:.8em;height:.8em;border-radius:50%;background:var(--red);margin-right:.5rem;vertical-align:-.05em}
-h2{font-size:2rem;letter-spacing:-.02em;margin:3rem 0 1rem}
-form{display:grid;gap:1.1rem}
-label{display:grid;gap:.3rem;font-weight:700}
-label small{font-weight:400;opacity:.7}
-input[type=text],input[type=password]{font:inherit;padding:.75rem 1rem;border:2px solid transparent;border-radius:.6rem;background:var(--chalk);color:#10231b}
-input:focus-visible,button:focus-visible{outline:3px solid var(--ball);outline-offset:2px}
-fieldset{border:0;padding:0;margin:0;display:flex;gap:.6rem;flex-wrap:wrap}
-legend{font-weight:700;margin-bottom:.4rem}
-fieldset label{display:block;font-weight:400}
+body{margin:0;background:var(--green);color:var(--gold);font:300 1.1rem/1.65 'Jost',system-ui,sans-serif;padding:clamp(.75rem,4vw,2.5rem)}
+.card{max-width:620px;margin:0 auto;border:1px solid var(--gold);border-radius:2.5rem;padding:5px}
+.inner{border:1px solid var(--gold);border-radius:2.1rem;padding:clamp(2rem,8vw,3.5rem) clamp(1.25rem,6vw,3rem);text-align:center}
+hr{border:0;border-top:1px solid var(--gold);margin:1.75rem auto;width:min(100%,260px)}
+.lead{margin:0;letter-spacing:.08em;color:var(--soft)}
+h1{font-weight:300;font-size:clamp(2.1rem,9vw,3.4rem);line-height:1.1;letter-spacing:.06em;margin:0}
+h1 b{display:block;font-weight:400;font-size:1.9em;letter-spacing:.04em;margin-top:.1em}
+.aside{color:var(--soft);font-size:.98rem;max-width:36ch;margin:0 auto}
+dl{margin:0;display:grid;gap:1.1rem}
+dt{font-size:.9rem;color:var(--soft);letter-spacing:.12em}
+dd{margin:0;font-size:1.3rem;font-weight:400}
+h2{font-weight:300;font-size:2rem;letter-spacing:.1em;margin:0 0 1.25rem}
+form{display:grid;gap:1.1rem;text-align:left}
+label{display:grid;gap:.3rem;font-weight:400}
+label small{font-weight:300;color:var(--soft)}
+input[type=text],input[type=password]{font:inherit;padding:.75rem 1rem;border:1px solid var(--gold);border-radius:99px;background:transparent;color:var(--soft)}
+input::placeholder{color:#8a7648}
+input:focus-visible,button:focus-visible{outline:2px solid var(--soft);outline-offset:3px}
+fieldset{border:0;padding:0;margin:0;display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center}
+legend{font-weight:400;margin:0 auto .6rem}
+fieldset label{display:block;font-weight:300}
 fieldset input{position:absolute;opacity:0}
-fieldset span{display:block;padding:.6rem 1.4rem;border:2px solid var(--chalk);border-radius:99px;cursor:pointer}
-fieldset input:checked+span{background:var(--ball);border-color:var(--ball);color:#10231b;font-weight:700}
-fieldset input:focus-visible+span{outline:3px solid var(--ball);outline-offset:2px}
-.row{display:flex;gap:.8rem;flex-wrap:wrap;align-items:center}
-button{font:700 1.05rem inherit;font-family:inherit;padding:.8rem 1.6rem;border:0;border-radius:.6rem;background:var(--ball);color:#10231b;cursor:pointer}
-button.ghost{background:none;color:var(--chalk);border:2px solid var(--chalk)}
+fieldset span{display:block;padding:.55rem 1.6rem;border:1px solid var(--gold);border-radius:99px;cursor:pointer}
+fieldset input:checked+span{background:var(--gold);color:var(--green);font-weight:500}
+fieldset input:focus-visible+span{outline:2px solid var(--soft);outline-offset:3px}
+.row{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center;margin-top:.5rem}
+button{font:500 1rem 'Jost',sans-serif;padding:.8rem 1.7rem;border:1px solid var(--gold);border-radius:99px;background:var(--gold);color:var(--green);cursor:pointer}
+button.ghost{background:none;color:var(--gold)}
 button:disabled{opacity:.5}
-#msg{min-height:1.6em;font-weight:700}#msg.err{color:#ff9d96}
-</style></head><body><main>
+#msg{min-height:1.6em;text-align:center;color:var(--soft)}#msg.err{color:#f0a08a}
+</style></head><body><div class="card"><main class="inner">
 <p class="lead">You are cordially invited to</p>
-<h1>Nathan Alex Sequeira's <span class="n">21st</span> birthday.</h1>
+<hr>
+<h1>Nathan Alex Sequeira's <b>21st birthday</b></h1>
+<hr>
 <p class="aside">Why did I make this a website? Because I was bored and I'm a computer scientist.</p>
+<hr>
 <dl>
-<dt>Date</dt><dd>Saturday, 9th January 2027</dd>
-<dt>Time</dt><dd>18:00 MST</dd>
-<dt>Place</dt><dd>Par and Pour, 9884 47 Ave NW</dd>
-<dt>There will be</dt><dd>Buffet, Drinks, Virtual Golf, Pool Tables</dd>
+<div><dt>Date</dt><dd>Saturday, 9th January 2027</dd></div>
+<div><dt>Time</dt><dd>18:00 MST</dd></div>
+<div><dt>Place</dt><dd>Par and Pour, 9884 47 Ave NW</dd></div>
+<div><dt>There will be</dt><dd>Buffet, Drinks, Virtual Golf, Pool Tables</dd></div>
 </dl>
-<h2><span class="ball"></span>RSVP here</h2>
+<hr>
+<h2>RSVP here</h2>
 <form id="f">
 <label>Name <input type="text" id="name" required maxlength="60" autocomplete="name"></label>
 <label>Password <small>Optional. Set one to edit your RSVP later.</small>
@@ -56,7 +63,7 @@ button:disabled{opacity:.5}
 <div class="row"><button id="go">Send RSVP</button>
 <button type="button" id="load" class="ghost">Load my existing RSVP</button></div>
 <div id="msg" role="status" aria-live="polite"></div>
-</form></main>
+</form></main></div>
 <script>
 const WORKER_URL="https://YOUR-WORKER.YOUR-SUBDOMAIN.workers.dev"; // set after deploying worker/worker.js
 const $=id=>document.getElementById(id), msg=(t,e)=>{$('msg').textContent=t;$('msg').className=e?'err':''};
