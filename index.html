@@ -99,7 +99,9 @@ $('f').addEventListener('input',ready);$('f').addEventListener('change',ready);
 const base=()=>({name:$('name').value,password:$('pw').value});
 $('f').onsubmit=async e=>{e.preventDefault();$('go').disabled=true;msg('Saving…');
   try{const d=await call('rsvp',{...base(),status:document.querySelector('[name=s]:checked').value});
-    msg(`Saved.\nYou're down as "${d.status}".\nLog in with the same name and password to change it.`)}
+    {const n=$('name').value.trim();
+    const reply={yes:'Excellent choice!',no:`Et tu? ${n}`,maybe:'Your indecision has been noted by the Senate.'}[d.status];
+    msg(`Saved.\nYou're down as a "${d.status}". ${reply}\nLog in with the same name and password to change it.`)}}
   catch(x){msg(x.message,1)}ready()};
 $('load').onclick=async()=>{if(!$('name').value)return msg('Enter your name first.',1);msg('Looking…');
   try{const d=await call('lookup',base());document.querySelector(`[name=s][value=${d.status}]`).checked=true;ready();msg(`Found it: "${d.status}". Change it and press Send RSVP.`)}
