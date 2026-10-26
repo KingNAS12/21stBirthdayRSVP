@@ -70,7 +70,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 <div id="msg" role="status" aria-live="polite"></div>
 </form></main></div>
 <script>
-const WORKER_URL="https://YOUR-WORKER.YOUR-SUBDOMAIN.workers.dev"; // set after deploying worker/worker.js
+const WORKER_URL="https://21stbirthdayrsvp.nathanseq12.workers.dev"; // set after deploying worker/worker.js
 const $=id=>document.getElementById(id), msg=(t,e)=>{$('msg').textContent=t;$('msg').className=e?'err':''};
 async function call(action,body){
   const r=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,...body})});
