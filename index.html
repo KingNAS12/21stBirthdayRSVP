@@ -53,6 +53,15 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .rsvp{position:relative}
 .rsvp::before{content:"";position:absolute;left:-1.75rem;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--purple),var(--orange))}
 }
+[hidden]{display:none!important}
+#plus{display:grid;gap:1.1rem}
+label.check{display:flex;align-items:center;justify-content:center;gap:.7rem;cursor:pointer;font-weight:300}
+label.check input{width:1.2rem;height:1.2rem;accent-color:var(--purple);margin:0}
+#summary{border:1px solid var(--purple);border-radius:1.2rem;padding:1.1rem 1.4rem;text-align:left}
+#summary h3{margin:0 0 .4rem;font-size:1.2rem;font-weight:400;color:var(--orange)}
+#summary h4{margin:.9rem 0 .2rem;font-size:1rem;font-weight:500;color:var(--purple)}
+#summary p{margin:0;color:var(--soft)}
+#summary ul{margin:0;padding:0;list-style:none}
 </style></head><body><div class="card"><main class="inner">
 <p class="lead">You are cordially invited to</p>
 <h1><span>Nathan Alex Sequeira's</span><span>21st birthday</span></h1>
@@ -80,9 +89,15 @@ button:disabled{opacity:.4;cursor:not-allowed}
 <label><input type="radio" name="s" value="yes" required><span>Yes</span></label>
 <label><input type="radio" name="s" value="no"><span>No</span></label>
 <label><input type="radio" name="s" value="maybe"><span>Maybe</span></label></fieldset>
+<div id="plus" hidden>
+<label class="check"><input type="checkbox" id="plusOn"><span>I'm bringing a plus one</span></label>
+<label id="plusNameWrap" hidden>Plus one's name <small>Optional.</small>
+<input type="text" id="plusName" maxlength="60"></label>
+</div>
 <div class="row"><button id="go" disabled>Send RSVP</button>
 <button type="button" id="load" class="ghost">Load my existing RSVP</button></div>
 <div id="msg" role="status" aria-live="polite"></div>
+<div id="summary" hidden></div>
 </form>
 </section>
 </div></main></div>
@@ -94,17 +109,42 @@ async function call(action,body){
   const d=await r.json().catch(()=>({error:'Server error. Try again.'}));
   if(!r.ok)throw new Error(d.error||'Something went wrong.');return d;
 }
-const ready=()=>{$('go').disabled=!($('name').value.trim()&&document.querySelector('[name=s]:checked'))};
+const ready=()=>{
+  const st=document.querySelector('[name=s]:checked');
+  const can=st&&st.value!=='no';
+  $('plus').hidden=!can;
+  if(!can)$('plusOn').checked=false;
+  $('plusNameWrap').hidden=!$('plusOn').checked;
+  $('go').disabled=!($('name').value.trim()&&st)};
+function showSummary(g){
+  const box=$('summary');box.replaceChildren();box.hidden=false;
+  const add=(tag,text)=>{const e=document.createElement(tag);e.textContent=text;box.appendChild(e)};
+  const by=s=>g.filter(x=>x.status===s);
+  const heads=x=>x.length+x.filter(y=>y.plusone).length;
+  add('h3',`Guest list: ${g.length} ${g.length===1?'reply':'replies'}`);
+  add('p',`Coming: ${heads(by('yes'))}. Maybe: ${heads(by('maybe'))}. Not coming: ${by('no').length}.`);
+  [['yes','Yes'],['maybe','Maybe'],['no','No']].forEach(([s,l])=>{
+    const x=by(s);if(!x.length)return;
+    add('h4',`${l} (${x.length})`);
+    const ul=document.createElement('ul');
+    x.forEach(y=>{const li=document.createElement('li');
+      li.textContent=y.name+(y.plusone?` + ${y.plusone==='yes'?'plus one':y.plusone}`:'');ul.appendChild(li)});
+    box.appendChild(ul)});
+}
+const plusVal=()=>$('plusOn').checked?($('plusName').value.trim()||'yes'):'';
 $('f').addEventListener('input',ready);$('f').addEventListener('change',ready);
 const base=()=>({name:$('name').value,password:$('pw').value});
-$('f').onsubmit=async e=>{e.preventDefault();$('go').disabled=true;msg('Saving…');
-  try{const d=await call('rsvp',{...base(),status:document.querySelector('[name=s]:checked').value});
+$('f').onsubmit=async e=>{e.preventDefault();$('go').disabled=true;$('summary').hidden=true;msg('Saving…');
+  try{const d=await call('rsvp',{...base(),status:document.querySelector('[name=s]:checked').value,plusOne:plusVal()});
     {const n=$('name').value.trim();
     const reply={yes:'Excellent choice!',no:`Et tu? ${n}`,maybe:'Your indecision has been noted by the Senate.'}[d.status];
-    msg(`Saved.\nYou're down as a "${d.status}". ${reply}`)}}
+    const pl=plusVal();
+    msg(`Saved.\nYou're down as a "${d.status}". ${reply}`+(pl&&d.status!=='no'?`\nPlus one added${pl==='yes'?'.':': '+pl+'.'}`:''))}}
   catch(x){msg(x.message,1)}ready()};
-$('load').onclick=async()=>{if(!$('name').value)return msg('Enter your name first.',1);msg('Looking…');
-  try{const d=await call('lookup',base());document.querySelector(`[name=s][value=${d.status}]`).checked=true;ready();msg(`Found it: "${d.status}". Change it and press Send RSVP.`)}
+$('load').onclick=async()=>{if(!$('name').value)return msg('Enter your name first.',1);msg('Looking…');$('summary').hidden=true;
+  try{const d=await call('lookup',base());
+    if(d.admin){showSummary(d.guests);return msg('Host view. Here is everyone who has replied.')}
+   document.querySelector(`[name=s][value=${d.status}]`).checked=true;$('plusOn').checked=!!d.plusone;$('plusName').value=d.plusone&&d.plusone!=='yes'?d.plusone:'';ready();msg(`Found it: "${d.status}". Change it and press Send RSVP.`)}
   catch(x){msg(x.message,1)}};
 // Fade sections in as they scroll into view
 if('IntersectionObserver' in window){

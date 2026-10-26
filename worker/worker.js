@@ -13,9 +13,16 @@ export default{async fetch(req,env){
   let b;try{b=await req.json()}catch{return J({error:'Bad request'},400)}
   const name=String(b.name||'').replace(/[|\r\n]/g,' ').trim().slice(0,60), pw=String(b.password||'').slice(0,100);
   if(!name)return J({error:'Enter your name.'},400);
+  const plus=(b.action==='rsvp'&&b.status!=='no')?String(b.plusOne||'').replace(/[|\r\n]/g,' ').trim().slice(0,60):'';
   if(b.action==='rsvp'&&!['yes','no','maybe'].includes(b.status))return J({error:'Pick yes, no or maybe.'},400);
   const url=`https://api.github.com/repos/${env.REPO}/contents/rsvps.txt`;
   const gh={Authorization:`Bearer ${env.GH_TOKEN}`,'User-Agent':'rsvp-worker',Accept:'application/vnd.github+json'};
+  // Host view: the host's own name + password (secrets ADMIN_NAME, ADMIN_PASSWORD) returns the full guest list
+  if(b.action==='lookup'&&env.ADMIN_NAME&&env.ADMIN_PASSWORD&&name.toLowerCase()===env.ADMIN_NAME.trim().toLowerCase()&&pw===env.ADMIN_PASSWORD){
+    const r0=await fetch(url,{headers:gh}), f0=await r0.json();
+    const rows=(r0.ok?dec(f0.content):'').split('\n').filter(l=>l.trim()&&!l.startsWith('#'));
+    return J({admin:true,guests:rows.map(l=>{const p=l.split('|');return{name:p[0],status:p[1],plusone:p[5]||'',updated:p[4]||''}})});
+  }
   for(let i=0;i<3;i++){
     const r=await fetch(url,{headers:gh}), f=await r.json();
     const lines=(r.ok?dec(f.content):'').split('\n').filter(l=>l.trim()&&!l.startsWith('#'));
@@ -24,13 +31,13 @@ export default{async fetch(req,env){
     if(idx>=0){
       const p=lines[idx].split('|'); salt=p[2]||''; h=p[3]||'';
       if(h&&await hash(pw,salt)!==h)return J({error:'Wrong password for that name.'},401);
-      if(b.action==='lookup')return J({status:p[1]});
+      if(b.action==='lookup')return J({status:p[1],plusone:p[5]||''});
     }else if(b.action==='lookup')return J({error:'No RSVP found for that name.'},404);
     else if(pw){salt=hex(crypto.getRandomValues(new Uint8Array(8)));h=await hash(pw,salt)}
-    const row=[name,b.status,salt,h,new Date().toISOString()].join('|');
+    const row=[name,b.status,salt,h,new Date().toISOString(),plus].join('|');
     idx>=0?lines[idx]=row:lines.push(row);
     const put=await fetch(url,{method:'PUT',headers:gh,body:JSON.stringify({
-      message:`RSVP: ${name} - ${b.status}`,content:enc('# name|status|salt|hash|updated\n'+lines.join('\n')+'\n'),sha:r.ok?f.sha:undefined})});
+      message:`RSVP: ${name} - ${b.status}`,content:enc('# name|status|salt|hash|updated|plusone\n'+lines.join('\n')+'\n'),sha:r.ok?f.sha:undefined})});
     if(put.ok)return J({ok:true,status:b.status});
     if(put.status!==409&&put.status!==422)break;
   }
