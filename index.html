@@ -35,19 +35,32 @@ fieldset span{display:block;padding:.55rem 1.6rem;border:1px solid var(--gold);b
 fieldset input:checked+span{background:var(--purple);border-color:var(--purple);color:var(--green);font-weight:500}
 fieldset input:focus-visible+span{outline:2px solid var(--soft);outline-offset:3px}
 .row{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center;margin-top:.5rem}
-button{font:500 1rem 'Jost',sans-serif;padding:.8rem 1.7rem;border:1px solid var(--orange);border-radius:99px;background:var(--orange);color:var(--green);cursor:pointer}
-button.ghost{background:none;color:var(--purple);border-color:var(--purple)}
+button{font:500 1rem 'Jost',sans-serif;padding:.8rem 1.7rem;border:1px solid var(--purple);border-radius:99px;background:none;color:var(--purple);cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform .2s}
+button.ghost{background:none;color:var(--purple)}
+button:not(:disabled):hover{background:var(--orange);border-color:var(--orange);color:var(--green);transform:translateY(-2px)}
+fieldset span{transition:background .2s,color .2s,border-color .2s}
+fieldset label:hover span{border-color:var(--purple);color:var(--purple)}
+fieldset label:hover input:checked+span{color:var(--green)}
 button:disabled{opacity:.4;cursor:not-allowed}
-#msg{min-height:1.6em;text-align:center;color:var(--soft)}#msg.err{color:#f0a08a}
+#msg{white-space:pre-line;min-height:1.6em;text-align:center;color:var(--soft)}#msg.err{color:#f0a08a}
 .reveal{opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s ease}
 .reveal.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+@media (orientation:landscape) and (min-width:760px){
+.card{max-width:1080px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:start;text-align:center}
+.cols .sep{display:none}
+.rsvp{position:relative}
+.rsvp::before{content:"";position:absolute;left:-1.75rem;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--purple),var(--orange))}
+}
 </style></head><body><div class="card"><main class="inner">
 <p class="lead">You are cordially invited to</p>
 <h1><span>Nathan Alex Sequeira's</span><span>21st birthday</span></h1>
 <hr>
-<p class="aside">Why did I make this a website? Because I was bored and I'm a computer scientist.</p>
+<p class="aside">Why did I make this a website?<br>Because I was bored and I'm a computer scientist.</p>
 <hr>
+<div class="cols">
+<section class="details">
 <dl>
 <div><dt>Date</dt><dd>Saturday, 9th January 2027</dd></div>
 <div><dt>Time</dt><dd>18:00 MST</dd></div>
@@ -55,7 +68,9 @@ button:disabled{opacity:.4;cursor:not-allowed}
 <div><dt>There will be</dt><dd>Buffet, Drinks,<br>Pool Tables, Virtual Golf ($20).</dd></div>
 <div><dt>Gifts</dt><dd class="gifts"><span>Your presence is the greatest gift!</span><span>But... if you'd really like to get me something, I need money to fund a research trip to a conference in Japan.</span><span>Or I'll also always accept new action figures to add to my collection.</span></dd></div>
 </dl>
-<hr>
+</section>
+<hr class="sep">
+<section class="rsvp">
 <h2>RSVP here</h2>
 <form id="f">
 <label>Name <input type="text" id="name" required maxlength="60" autocomplete="name"></label>
@@ -68,7 +83,9 @@ button:disabled{opacity:.4;cursor:not-allowed}
 <div class="row"><button id="go" disabled>Send RSVP</button>
 <button type="button" id="load" class="ghost">Load my existing RSVP</button></div>
 <div id="msg" role="status" aria-live="polite"></div>
-</form></main></div>
+</form>
+</section>
+</div></main></div>
 <script>
 const WORKER_URL="https://21stbirthdayrsvp.nathanseq12.workers.dev"; // set after deploying worker/worker.js
 const $=id=>document.getElementById(id), msg=(t,e)=>{$('msg').textContent=t;$('msg').className=e?'err':''};
@@ -82,7 +99,7 @@ $('f').addEventListener('input',ready);$('f').addEventListener('change',ready);
 const base=()=>({name:$('name').value,password:$('pw').value});
 $('f').onsubmit=async e=>{e.preventDefault();$('go').disabled=true;msg('Saving…');
   try{const d=await call('rsvp',{...base(),status:document.querySelector('[name=s]:checked').value});
-    msg(`Saved. You're down as "${d.status}". Log in with the same name and password to change it.`)}
+    msg(`Saved.\nYou're down as "${d.status}".\nLog in with the same name and password to change it.`)}
   catch(x){msg(x.message,1)}ready()};
 $('load').onclick=async()=>{if(!$('name').value)return msg('Enter your name first.',1);msg('Looking…');
   try{const d=await call('lookup',base());document.querySelector(`[name=s][value=${d.status}]`).checked=true;ready();msg(`Found it: "${d.status}". Change it and press Send RSVP.`)}
@@ -90,6 +107,6 @@ $('load').onclick=async()=>{if(!$('name').value)return msg('Enter your name firs
 // Fade sections in as they scroll into view
 if('IntersectionObserver' in window){
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
-  document.querySelectorAll('.aside,dl>div,main>hr,h2,form').forEach(el=>{el.classList.add('reveal');io.observe(el)});
+  document.querySelectorAll('.aside,dl>div,main hr,h2,form').forEach(el=>{el.classList.add('reveal');io.observe(el)});
 }
 </script></body></html>
