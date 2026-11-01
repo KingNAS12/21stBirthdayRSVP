@@ -30,7 +30,9 @@ export default{async fetch(req,env){
     let salt='',h='';
     if(idx>=0){
       const p=lines[idx].split('|'); salt=p[2]||''; h=p[3]||'';
-      if(h&&await hash(pw,salt)!==h)return J({error:'Wrong password for that name.'},401);
+      // Names are unique. An existing name can only be edited with its own password.
+      if(!h)return J({error:b.action==='lookup'?'That RSVP has no password, so it cannot be loaded or edited.':'That name is already taken. Add your last name or initial.'},409);
+      if(await hash(pw,salt)!==h)return J({error:'That name is already taken, or the password is wrong. If it is your RSVP, enter your password. If not, add your last name or initial.'},401);
       if(b.action==='lookup')return J({status:p[1],plusone:p[5]||''});
     }else if(b.action==='lookup')return J({error:'No RSVP found for that name.'},404);
     else if(pw){salt=hex(crypto.getRandomValues(new Uint8Array(8)));h=await hash(pw,salt)}
